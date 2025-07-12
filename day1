@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started with RStudio in Posit Cloud</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Lighter blue background */
+        }
+        .step-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+            padding: 1.5rem 2.5rem; /* p-6 sm:p-10 */
+        }
+        .step-number {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            font-weight: bold;
+            border-radius: 9999px; /* rounded-full */
+            width: 2.5rem; /* w-10 */
+            height: 2.5rem; /* h-10 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-right: 1rem; /* mr-4 */
+        }
+        .code-block {
+            background-color: #e2e8f0; /* bg-slate-200 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap; /* Ensures long lines wrap */
+            word-wrap: break-word; /* Breaks long words */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-xl shadow-lg p-6 sm:p-10 max-w-4xl w-full">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Getting Ready for Data Analysis: Posit Cloud RStudio</h1>
+            <p class="text-lg text-gray-600">
+                Now that you've shared your initial thoughts on racial health disparities, it's time to learn how to use RStudio in Posit Cloud to explore real data.
+                This will allow us to see if our common sense observations align with the evidence!
+            </p>
+        </header>
+
+        <section class="space-y-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Part 1: Accessing RStudio in Posit Cloud (Free Version)</h2>
+
+            <!-- Step 1 -->
+            <div class="step-card flex items-start">
+                <div class="step-number">1</div>
+                <div>
+                    <h3 class="text-xl font-semibold text-blue-700 mb-2">Sign Up / Log In to Posit Cloud</h3>
+                    <p class="text-gray-700 mb-2">
+                        Open your web browser and go to <a href="https://posit.cloud/" target="_blank" class="text-blue-600 hover:underline font-medium">posit.cloud</a>.
+                        If you don't have an account, sign up for the **free** tier. You can usually sign up using a Google, GitHub, or Microsoft account for convenience.
+                        If you already have an account, simply log in.
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        <em>Look for options like "Sign Up," "Get Started," or "Log In."</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card flex items-start">
+                <div class="step-number">2</div>
+                <div>
+                    <h3 class="text-xl font-semibold text-blue-700 mb-2">Create a New Project</h3>
+                    <p class="text-gray-700 mb-2">
+                        Once you're logged in, you'll see your Posit Cloud dashboard.
+                        Look for a button that says **"New Project"** (it might be a green button or in a prominent location).
+                        From the dropdown, select **"New RStudio Project"**.
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        <em>Posit Cloud will take a moment to spin up a new RStudio environment for you.</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card flex items-start">
+                <div class="step-number">3</div>
+                <div>
+                    <h3 class="text-xl font-semibold text-blue-700 mb-2">Familiarize Yourself with RStudio</h3>
+                    <p class="text-gray-700">
+                        Once your project loads, you'll see the RStudio interface. It usually has four main panes:
+                        <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
+                            <li>**Console (bottom-left):** Where you type and run R commands.</li>
+                            <li>**Source Editor (top-left):** Where you write and save your R scripts (.R files).</li>
+                            <li>**Environment/History (top-right):** Shows loaded data, variables, and command history.</li>
+                            <li>**Files/Plots/Packages/Help (bottom-right):** For managing files, viewing plots, installing packages, and accessing help.</li>
+                        </ul>
+                    </p>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <em>Don't worry if it looks complex at first; we'll guide you through the essentials.</em>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-10 space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Part 2: Connecting Your Common Sense to Data</h2>
+            <p class="text-gray-700 mb-4">
+                Remember the questions you answered about racial disparities? Now, we'll use the BRFSS 2022 data in RStudio to investigate these very same issues.
+                For each of the health topics below, recall the option you chose (e.g., "Higher among African Americans," "Worse self-reported health," etc.).
+                Our goal will be to use statistical analysis to see if the data supports or challenges your initial common sense predictions.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Step 1: Import the Data (Debugging)</h3>
+            <p class="text-gray-700 mb-3">
+                It seems like there was an issue with `df` being recognized as a data frame. Let's re-run the import step and check.
+                Type or copy-paste the following code into your **Console** (bottom-left pane) and press Enter after each line.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# First, let's check what 'df' currently is
+class(df)
+
+# If it says "function" or "closure", that's the problem.
+# Let's try to remove it from your environment to start fresh.
+rm(df)
+
+# Install and load the 'readr' package (if you haven't already)
+install.packages("readr")
+library(readr)
+
+# Read the BRFSS 2022 subset data directly from the web
+# This might take a moment to download depending on your internet speed
+df &lt;- read_csv("https://tinyurl.com/5t37tjsb")
+
+# Now, let's check the class of 'df' again
+class(df)
+
+# It should now say "data.frame" or "tbl_df" (which is a type of data frame)
+
+# Look at the names of the columns (variables) in our data
+names(df)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                You should now see a list of variable names printed in your console. This confirms the data has loaded correctly into `df` as a data frame!
+                Once you confirm `class(df)` is `data.frame` or `tbl_df`, you can continue with Step 2.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 2: Identify Key Variables for Diabetes and Race</h3>
+            <p class="text-gray-700 mb-3">
+                For our first analysis, we'll focus on **Diabetes Prevalence** and **Race**.
+                The variables we will use from this dataset are:
+                <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
+                    <li><code>DIABETE4</code>: This variable tells us if a person has ever been told they have diabetes.</li>
+                    <li><code>X_RACEGR4</code>: This variable groups people into 5 broad racial/ethnic categories.</li>
+                    <li><code>X_LLCPWT</code>: This is the survey weight variable, which is very important for making our results representative of the larger population. We will use this later for more advanced analysis.</li>
+                </ul>
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 3: Understand and Prepare the Race Variable (`X_RACEGR4`)</h3>
+            <p class="text-gray-700 mb-3">
+                The <code>X_RACEGR4</code> variable uses numbers to represent racial/ethnic groups. We need to convert these numbers into more descriptive labels so we can understand our results easily. We also need to handle responses like "Don't know" or "Refused".
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Install and load the 'dplyr' package (if you haven't already)
+# This package helps us easily manipulate data
+install.packages("dplyr")
+library(dplyr)
+
+# Look at the raw counts of X_RACEGR4 before cleaning (including NAs)
+table(df$X_RACEGR4, useNA = "always")
+
+# Recode X_RACEGR4 into clear labels and set "Don't know/Refused" (9) to NA
+df &lt;- df %&gt;%
+  mutate(
+    Race_Group = case_when(
+      X_RACEGR4 == 1 ~ "White, Non-Hispanic",
+      X_RACEGR4 == 2 ~ "Black, Non-Hispanic",
+      X_RACEGR4 == 3 ~ "Other race, Non-Hispanic",
+      X_RACEGR4 == 4 ~ "Multiracial, Non-Hispanic",
+      X_RACEGR4 == 5 ~ "Hispanic",
+      X_RACEGR4 == 9 ~ NA_character_, # Set "Don't know/Refused" to NA
+      TRUE ~ NA_character_ # Catch any other unexpected values as NA
+    ),
+    # Convert the new Race_Group variable to a factor with the correct order
+    Race_Group = factor(Race_Group, levels = c(
+      "White, Non-Hispanic",
+      "Black, Non-Hispanic",
+      "Hispanic",
+      "Other race, Non-Hispanic",
+      "Multiracial, Non-Hispanic"
+    ))
+  )
+
+# Check the new labels and counts (NAs will be excluded from this table by default)
+table(df$Race_Group)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                Now you have a `Race_Group` variable with clear names for each racial/ethnic category! Notice that the "Don't know/Refused" category (9) is now treated as `NA` and is not shown in this table.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 4: Understand and Prepare the Diabetes Variable (`DIABETE4`)</h3>
+            <p class="text-gray-700 mb-3">
+                The `DIABETE4` variable also uses numbers. Let's convert these into easy-to-understand labels and set "Don't know" or "Refused" as missing.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Look at the raw counts of DIABETE4 before cleaning (including NAs)
+table(df$DIABETE4, useNA = "always")
+
+# Recode DIABETE4 into clear labels and set "Don't know/Refused" (7, 9) to NA
+df &lt;- df %&gt;%
+  mutate(
+    Diabetes_Status = case_when(
+      DIABETE4 == 1 ~ "Yes, diagnosed",
+      DIABETE4 == 2 ~ "Yes, gestational diabetes only",
+      DIABETE4 == 3 ~ "No diabetes",
+      DIABETE4 == 4 ~ "No, pre-diabetes or borderline diabetes",
+      DIABETE4 == 7 ~ NA_character_, # Set "Don't know/Not Sure" to NA
+      DIABETE4 == 9 ~ NA_character_, # Set "Refused" to NA
+      TRUE ~ NA_character_ # Catch any other unexpected values as NA
+    ),
+    # Convert the new Diabetes_Status variable to a factor
+    Diabetes_Status = factor(Diabetes_Status, levels = c(
+      "Yes, diagnosed",
+      "Yes, gestational diabetes only",
+      "No diabetes",
+      "No, pre-diabetes or borderline diabetes"
+    ))
+  )
+
+# Check the new labels and counts (NAs will be excluded from this table by default)
+table(df$Diabetes_Status)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                Now you have a `Diabetes_Status` variable with clear labels. The "Don't know/Refused" categories (7, 9) are now treated as `NA` and are not shown in this table.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 5: Calculate Frequencies (Counts) for Diabetes Status</h3>
+            <p class="text-gray-700 mb-3">
+                Let's see how many people fall into each diabetes category in our dataset, **excluding missing values**.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Calculate the frequency (count) for each diabetes status (excluding NAs)
+diabetes_counts &lt;- table(df$Diabetes_Status)
+print(diabetes_counts)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                This table shows the number of individuals in each category, only for those who provided a valid response.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 6: Calculate Proportions (Percentages) for Diabetes Status</h3>
+            <p class="text-gray-700 mb-3">
+                Counts are good, but percentages are often easier to understand for comparing groups. These percentages will also **exclude missing values**.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Calculate the proportion (percentage) for each diabetes status (excluding NAs)
+# We multiply by 100 to get percentages
+diabetes_proportions &lt;- prop.table(table(df$Diabetes_Status)) * 100
+print(diabetes_proportions)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                This table shows the percentage of individuals in each diabetes status category in our dataset, based only on valid responses.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 7: Explore Diabetes Status by Race (Counts)</h3>
+            <p class="text-gray-700 mb-3">
+                Now, let's see how diabetes status breaks down across different racial/ethnic groups, **excluding missing values**. This is called a cross-tabulation.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Create a cross-tabulation (frequency table) of Diabetes Status by Race Group (excluding NAs)
+diabetes_by_race_counts &lt;- table(df$Diabetes_Status, df$Race_Group)
+print(diabetes_by_race_counts)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                This table shows the count of individuals for each combination of diabetes status and racial group, based only on valid responses for both variables.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 8: Explore Diabetes Status by Race (Percentages within Race Groups)</h3>
+            <p class="text-gray-700 mb-3">
+                To truly compare racial disparities, we need to calculate the percentage of each diabetes status *within* each racial group. This helps us see, for example, what percentage of African Americans have diagnosed diabetes compared to the percentage of White, Non-Hispanics. These percentages will also **exclude missing values**.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Calculate proportions (percentages) of Diabetes Status within each Race Group (excluding NAs)
+# 'margin = 2' tells R to calculate percentages down the columns (i.e., within each race group)
+diabetes_by_race_proportions &lt;- prop.table(table(df$Diabetes_Status, df$Race_Group), margin = 2) * 100
+print(diabetes_by_race_proportions)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                **Interpretation:** Look at the "Yes, diagnosed" row. The percentages across the columns (White, Non-Hispanic; Black, Non-Hispanic; Hispanic; etc.) show the percentage of people *within that specific racial group* who have been diagnosed with diabetes. Compare these percentages across the racial groups.
+            </p>
+            <p class="text-gray-700 mt-3">
+                **Reflect:** How do these percentages compare to your initial common sense predictions about diabetes prevalence among African Americans?
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 9: Focus on "Yes, diagnosed" Diabetes Prevalence by Race</h3>
+            <p class="text-gray-700 mb-3">
+                Now, let's isolate the percentages for only those who have been "Yes, diagnosed" with diabetes, broken down by racial group. This makes it easier to directly compare the prevalence of diagnosed diabetes across groups.
+            </p>
+            <div class="code-block">
+                <pre><code>
+# Select only the row for "Yes, diagnosed" from the proportions table
+# We use square brackets [row_name, ] to select a specific row by its name.
+diagnosed_diabetes_only &lt;- diabetes_by_race_proportions["Yes, diagnosed", ]
+print(diagnosed_diabetes_only)
+                </code></pre>
+            </div>
+            <p class="text-gray-700 mt-3">
+                This table now clearly shows the percentage of "Yes, diagnosed" diabetes within each racial group. This is a key finding for understanding racial disparities!
+            </p>
+
+            <div class="bg-gray-100 p-4 rounded-lg shadow-sm mt-8">
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">What's Next?</h3>
+                <p class="text-700">
+                    We've just done a basic exploration of diabetes prevalence by race. In future steps, we'll learn how to:
+                    <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
+                        <li>Explore other important health outcomes like Asthma and Cardiovascular Disease.</li>
+                        <li>Create powerful visualizations (graphs) to make these comparisons even clearer and more impactful.</li>
+                    </ul>
+                </p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-8 text-gray-500 text-sm">
+            <p>&copy; 2025 Health Disparities Learning Module. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
