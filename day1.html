@@ -62,7 +62,7 @@
                     <h3 class="text-xl font-semibold text-blue-700 mb-2">Sign Up / Log In to Posit Cloud</h3>
                     <p class="text-gray-700 mb-2">
                         Open your web browser and go to <a href="https://posit.cloud/" target="_blank" class="text-blue-600 hover:underline font-medium">posit.cloud</a>.
-                        If you don't have an account, sign up for the **free** tier. You can usually sign up using a Google, GitHub, or Microsoft account for convenience.
+                        If you don't have an account, sign up for the <strong>free</strong> tier. You can usually sign up using a Google, GitHub, or Microsoft account for convenience.
                         If you already have an account, simply log in.
                     </p>
                     <p class="text-sm text-gray-500">
@@ -78,8 +78,8 @@
                     <h3 class="text-xl font-semibold text-blue-700 mb-2">Create a New Project</h3>
                     <p class="text-gray-700 mb-2">
                         Once you're logged in, you'll see your Posit Cloud dashboard.
-                        Look for a button that says **"New Project"** (it might be a green button or in a prominent location).
-                        From the dropdown, select **"New RStudio Project"**.
+                        Look for a button that says <strong>"New Project"</strong> (it might be a green button or in a prominent location).
+                        From the dropdown, select <strong>"New RStudio Project"</strong>.
                     </p>
                     <p class="text-sm text-gray-500">
                         <em>Posit Cloud will take a moment to spin up a new RStudio environment for you.</em>
@@ -95,10 +95,10 @@
                     <p class="text-gray-700">
                         Once your project loads, you'll see the RStudio interface. It usually has four main panes:
                         <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
-                            <li>**Console (bottom-left):** Where you type and run R commands.</li>
-                            <li>**Source Editor (top-left):** Where you write and save your R scripts (.R files).</li>
-                            <li>**Environment/History (top-right):** Shows loaded data, variables, and command history.</li>
-                            <li>**Files/Plots/Packages/Help (bottom-right):** For managing files, viewing plots, installing packages, and accessing help.</li>
+                            <li><strong>Console (bottom-left):</strong> Where you type and run R commands.</li>
+                            <li><strong>Source Editor (top-left):</strong> Where you write and save your R scripts (.R files).</li>
+                            <li><strong>Environment/History (top-right):</strong> Shows loaded data, variables, and command history.</li>
+                            <li><strong>Files/Plots/Packages/Help (bottom-right):</strong> For managing files, viewing plots, installing packages, and accessing help.</li>
                         </ul>
                     </p>
                     <p class="text-sm text-gray-500 mt-2">
@@ -119,7 +119,7 @@
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Step 1: Import the Data (Debugging)</h3>
             <p class="text-gray-700 mb-3">
                 It seems like there was an issue with `df` being recognized as a data frame. Let's re-run the import step and check.
-                Type or copy-paste the following code into your **Console** (bottom-left pane) and press Enter after each line.
+                Type or copy-paste the following code into your <strong>Console</strong> (bottom-left pane) and press Enter after each line.
             </p>
             <div class="code-block">
                 <pre><code>
@@ -154,7 +154,7 @@ names(df)
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 2: Identify Key Variables for Diabetes and Race</h3>
             <p class="text-gray-700 mb-3">
-                For our first analysis, we'll focus on **Diabetes Prevalence** and **Race**.
+                For our first analysis, we'll focus on <strong>Diabetes Prevalence</strong> and <strong>Race</strong>.
                 The variables we will use from this dataset are:
                 <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
                     <li><code>DIABETE4</code>: This variable tells us if a person has ever been told they have diabetes.</li>
@@ -247,7 +247,7 @@ table(df$Diabetes_Status)
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 5: Calculate Frequencies (Counts) for Diabetes Status</h3>
             <p class="text-gray-700 mb-3">
-                Let's see how many people fall into each diabetes category in our dataset, **excluding missing values**.
+                Let's see how many people fall into each diabetes category in our dataset, <strong>excluding missing values</strong>.
             </p>
             <div class="code-block">
                 <pre><code>
@@ -262,7 +262,7 @@ print(diabetes_counts)
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 6: Calculate Proportions (Percentages) for Diabetes Status</h3>
             <p class="text-gray-700 mb-3">
-                Counts are good, but percentages are often easier to understand for comparing groups. These percentages will also **exclude missing values**.
+                Counts are good, but percentages are often easier to understand for comparing groups. These percentages will also <strong>exclude missing values</strong>.
             </p>
             <div class="code-block">
                 <pre><code>
@@ -278,7 +278,7 @@ print(diabetes_proportions)
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 7: Explore Diabetes Status by Race (Counts)</h3>
             <p class="text-gray-700 mb-3">
-                Now, let's see how diabetes status breaks down across different racial/ethnic groups, **excluding missing values**. This is called a cross-tabulation.
+                Now, let's see how diabetes status breaks down across different racial/ethnic groups, <strong>excluding missing values</strong>. This is called a cross-tabulation.
             </p>
             <div class="code-block">
                 <pre><code>
@@ -293,7 +293,7 @@ print(diabetes_by_race_counts)
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 8: Explore Diabetes Status by Race (Percentages within Race Groups)</h3>
             <p class="text-gray-700 mb-3">
-                To truly compare racial disparities, we need to calculate the percentage of each diabetes status *within* each racial group. This helps us see, for example, what percentage of African Americans have diagnosed diabetes compared to the percentage of White, Non-Hispanics. These percentages will also **exclude missing values**.
+                To truly compare racial disparities, we need to calculate the percentage of each diabetes status *within* each racial group. This helps us see, for example, what percentage of African Americans have diagnosed diabetes compared to the percentage of White, Non-Hispanics. These percentages will also <strong>exclude missing values</strong>.
             </p>
             <div class="code-block">
                 <pre><code>
@@ -304,10 +304,10 @@ print(diabetes_by_race_proportions)
                 </code></pre>
             </div>
             <p class="text-gray-700 mt-3">
-                **Interpretation:** Look at the "Yes, diagnosed" row. The percentages across the columns (White, Non-Hispanic; Black, Non-Hispanic; Hispanic; etc.) show the percentage of people *within that specific racial group* who have been diagnosed with diabetes. Compare these percentages across the racial groups.
+                <strong>Interpretation:</strong> Look at the "Yes, diagnosed" row. The percentages across the columns (White, Non-Hispanic; Black, Non-Hispanic; Hispanic; etc.) show the percentage of people *within that specific racial group* who have been diagnosed with diabetes. Compare these percentages across the racial groups.
             </p>
             <p class="text-gray-700 mt-3">
-                **Reflect:** How do these percentages compare to your initial common sense predictions about diabetes prevalence among African Americans?
+                <strong>Reflect:</strong> How do these percentages compare to your initial common sense predictions about diabetes prevalence among African Americans?
             </p>
 
             <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Step 9: Focus on "Yes, diagnosed" Diabetes Prevalence by Race</h3>
