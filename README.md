@@ -2,14 +2,21 @@
 
 Welcome to the SummerFX2025 repository! This repository contains materials and exercises for our summer program.
 
-## Day 1 Worksheet
+## Day 1 Activities
 
-You can access the interactive Day 1 RStudio Posit Cloud worksheet here:
-[Day 1 Worksheet (Live Page)](https://drykim.github.io/SummerFX2025/day1.html)
+On Day 1, we will begin by checking student understanding of racial disparities in health through a survey questionnaire. Please use the following link to answer the survey:
+[Racial Health Disparities Survey](https://forms.gle/vgiRgibEWrwiT9oD6)
 
----
+After the survey, I will introduce RStudio and walk through the introductory worksheet:
+[R Introduction: Basic Coding and Practice](https://drykim.github.io/SummerFX2025/R_Intro.html)
 
-### Repository Contents
+Following my session, students will discuss health disparity issues further after reading the common findings:
+[Common Findings on Racial Health Disparities](https://drykim.github.io/SummerFX2025/Common_Finding.html)
 
-* `day1.html`: The main worksheet for Day 1.
-* (Add other files/folders as your project grows)
+A research mentor will also be available to ensure every student can follow the R Intro, and can successfully import and create tables when given data and variable names.
+
+## Day 2 Worksheet
+
+The Day 1 worksheet will be used as the main worksheet for Day 2. You can access it here:
+[Day 2 Worksheet (Live Page)](https://drykim.github.io/SummerFX2025/day2.html)
+
