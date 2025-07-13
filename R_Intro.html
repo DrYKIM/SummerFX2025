@@ -225,6 +225,82 @@ print(experience_table)
                 You've mastered the basics of R data structures! In the next session, we will move beyond small, custom datasets. We'll learn how to <strong>import and explore real-world national health data</strong>, preparing us for more in-depth statistical analysis.
             </p>
         </div>
+
+        <!-- NEW SECTION: Part 3: Importing and Exploring Real Data -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Part 3: Importing and Exploring Real Data</h2>
+        <p>
+            Now that you're comfortable with basic R operations, let's work with a larger, more realistic dataset. We'll import a subset of the Behavioral Risk Factor Surveillance System (BRFSS) 2022 data, which contains information on health-related behaviors, chronic health conditions, and preventive services from U.S. adults.
+        </p>
+
+        <h3>Step 1: Install and Load the 'readr' Package</h3>
+        <p>
+            The 'readr' package is part of the 'tidyverse' and provides fast and friendly functions to read rectangular data (like CSV, TSV, and fixed-width files).
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Install the 'readr' package (only run this once per project/environment)
+install.packages("readr")
+
+# Load the 'readr' package into your current R session
+library(readr)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> After `install.packages()`, R will download and install the package. `library(readr)` will load it, making its functions available. You might see some messages about attaching packages.
+        </div>
+
+        <h3>Step 2: Import the BRFSS 2022 Subset Data</h3>
+        <p>
+            We will read the data directly from a web URL. This is a common way to access public datasets without needing to download them manually.
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Read the BRFSS 2022 subset data directly from the web
+# This might take a moment to download depending on your internet speed
+df &lt;- read_csv("https://tinyurl.com/5t37tjsb")
+
+# View the first few rows of the data to get a sense of it
+head(df)
+
+# Get a summary of the data frame's structure and variable types
+str(df)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> R will download the CSV file and load it into a data frame named `df`. `head(df)` will show the first 6 rows, and `str(df)` will display information about each column (variable) and its data type.
+        </div>
+
+        <h3>Step 3: Explore Key Variables with Frequency Tables</h3>
+        <p>
+            Now, let's create simple frequency tables for some key variables in the BRFSS dataset. This helps us understand the distribution of responses for each variable.
+            <strong>You will need to refer to the BRFSS 2022 Codebook to understand what each variable and its values mean.</strong>
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Frequency table for DIABETE4 (Ever told you had diabetes?)
+# useNA = "always" ensures that missing values (NA) are also counted
+table(df$DIABETE4, useNA = "always")
+
+# Frequency table for CVDINFR4 (Ever told you had a heart attack?)
+table(df$CVDINFR4, useNA = "always")
+
+# Frequency table for CVDSTRK3 (Ever told you had a stroke?)
+table(df$CVDSTRK3, useNA = "always")
+
+# Frequency table for ADDEPEV3 (Ever told you had a depressive disorder?)
+table(df$ADDEPEV3, useNA = "always")
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> For each `table()` command, the console will output a count of how many times each unique value appears in that variable, including any missing values.
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg shadow-sm mt-8">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Next Steps with Real Data</h3>
+            <p class="text-700">
+                You've successfully imported and begun exploring real public health data! In upcoming sessions, we'll delve deeper into data cleaning, transformation, and more advanced statistical analysis techniques using these large datasets.
+            </p>
+        </div>
     </div>
 </body>
 </html>
