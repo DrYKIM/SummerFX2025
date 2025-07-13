@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Introduction: Basic Coding and Practice</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Lighter blue background */
+            color: #334155; /* Slate 700 */
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+            padding: 2.5rem;
+        }
+        h1 {
+            /* Adjusted size for the main page title */
+            font-weight: bold;
+            color: #1e3a8a; /* Dark blue */
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        h2 {
+            /* Custom style for h2, Tailwind classes will override font-size, font-weight, color, margin-bottom */
+            margin-top: 2rem; /* Keep consistent top margin for sections */
+            border-bottom: 2px solid #bfdbfe; /* Blue 200 */
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d4ed8; /* Blue 700 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .code-block {
+            background-color: #e2e8f0; /* bg-slate-200 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap; /* Ensures long lines wrap */
+            word-wrap: break-word; /* Breaks long words */
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .note {
+            background-color: #f0f9ff; /* Light blue for notes */
+            border-left: 4px solid #3b82f6; /* Blue border */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main page title: Reduced size from text-4xl sm:text-5xl to text-3xl sm:text-4xl -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">R Introduction: Basic Coding and Practice</h1>
+        <p>
+            Welcome to your introduction to R programming! R is a powerful language and environment for statistical computing and graphics. In this session, we'll cover how to access RStudio in Posit Cloud and then dive into some very basic R commands to get you started with data manipulation.
+        </p>
+
+        <!-- Part 1 Title: Now uses the same Tailwind classes as your day1 page's Part 1 -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Part 1: Accessing RStudio in Posit Cloud (Free Version)</h2>
+        <p>
+            This section will guide you through setting up your RStudio environment.
+        </p>
+
+        <h3>Step 1: Sign Up / Log In to Posit Cloud</h3>
+        <p>
+            Open your web browser and go to <a href="https://posit.cloud/" target="_blank" class="text-blue-600 hover:underline font-medium">posit.cloud</a>.
+            If you don't have an account, sign up for the <strong>free</strong> tier. You can usually sign up using a Google, GitHub, or Microsoft account for convenience.
+            If you already have an account, simply log in.
+        </p>
+        <p class="text-sm text-gray-500">
+            <em>Look for options like "Sign Up," "Get Started," or "Log In."</em>
+        </p>
+
+        <h3>Step 2: Create a New Project</h3>
+        <p>
+            Once you're logged in, you'll see your Posit Cloud dashboard.
+            Look for a button that says <strong>"New Project"</strong> (it might be a green button or in a prominent location).
+            From the dropdown, select <strong>"New RStudio Project"</strong>.
+        </p>
+        <p class="text-sm text-gray-500">
+            <em>Posit Cloud will take a moment to spin up a new RStudio environment for you.</em>
+        </p>
+
+        <h3>Step 3: Familiarize Yourself with RStudio</h3>
+        <p>
+            Once your project loads, you'll see the RStudio interface. It usually has four main panes:
+        </p>
+        <ul class="list-disc list-inside ml-4 mt-2 text-gray-700">
+            <li><strong>Console (bottom-left):</strong> Where you type and run R commands.</li>
+            <li><strong>Source Editor (top-left):</strong> Where you write and save your R scripts (.R files).</li>
+            <li><strong>Environment/History (top-right):</strong> Shows loaded data, variables, and command history.</li>
+            <li><strong>Files/Plots/Packages/Help (bottom-right):</strong> For managing files, viewing plots, installing packages, and accessing help.</li>
+        </ul>
+        <p class="text-sm text-gray-500 mt-2">
+            <em>Don't worry if it looks complex at first; we'll guide you through the essentials.</em>
+        </p>
+
+        <!-- Part 2 Title: Now uses the same Tailwind classes as your day1 page's Part 1 -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Part 2: Basic R Coding and Practice</h2>
+        <p>
+            Now that your RStudio environment is ready, let's write some basic R code! You can type these commands directly into the <strong>Console</strong> (bottom-left pane) and press Enter after each line, or type them into a new <strong>R Script</strong> (File > New File > R Script in the top-left pane) and run lines using Ctrl+Enter (Cmd+Enter on Mac).
+        </p>
+
+        <h3>Practice 1: Creating a Vector of Student Names</h3>
+        <p>
+            A vector is the most basic data structure in R. It's a sequence of data elements of the same basic type. Here, we'll create a vector for our group's student names.
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Create a character vector for student names
+student_names &lt;- c("Christopher", "Gideon", "Christina", "Camille", "Sydney", "Boisseau")
+
+# Print the vector to see its contents
+print(student_names)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> The console will output the list of names you just created.
+        </div>
+
+        <h3>Practice 2: Creating a Factor for RStudio Experience</h3>
+        <p>
+            A factor is used to store categorical data in R. We'll create a factor to represent whether each student has used RStudio before.
+        </p>
+        <p>
+            <strong>Important:</strong> In the code block below, you will need to manually input the "Yes" or "No" answers for each student based on their responses during your session. Make sure the number of answers matches the number of students!
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Manually input "Yes" or "No" answers for RStudio experience for each student
+# Example: If Christopher said "Yes", Gideon "No", Christina "Yes", etc.
+# rstudio_experience_raw &lt;- c("Yes", "No", "Yes", "No", "Yes", "No") # Example input
+
+# Replace the example above with your actual student responses:
+rstudio_experience_raw &lt;- c("Yes", "No", "Yes", "Yes", "No", "No") # <--- REPLACE WITH YOUR DATA
+
+# Convert the raw answers into a factor with defined levels
+# Defining levels ensures consistency and proper ordering if needed
+rstudio_experience &lt;- factor(rstudio_experience_raw, levels = c("Yes", "No"))
+
+# Print the factor to see its contents and levels
+print(rstudio_experience)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> You'll see the "Yes" or "No" answer for each student, followed by the "Levels" of the factor. Ensure the number of entries in `rstudio_experience_raw` matches the number of `student_names`.
+        </div>
+
+        <h3>Practice 3: Combining Data into a Data Frame</h3>
+        <p>
+            A data frame is a table-like structure where each column can contain a different type of data (e.g., names are text, experience is a category). It's the most common way to store data in R for analysis.
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Combine the student names and RStudio experience into a data frame
+# Each vector becomes a column in the data frame
+student_data &lt;- data.frame(
+  Name = student_names,
+  RStudio_Experience = rstudio_experience
+)
+
+# Print the data frame to see the combined table in the console
+print(student_data)
+
+# To view the data frame in a spreadsheet-like viewer (like Excel) in RStudio
+View(student_data)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> The data frame will be printed in the console. Additionally, a new tab will open in RStudio's Source Editor pane, displaying `student_data` in a spreadsheet-like viewer, which is often more intuitive for seeing the data.
+        </div>
+
+        <h3>Practice 4: Creating a Frequency Table from the Data Frame</h3>
+        <p>
+            Finally, let's create a simple frequency table to see how many students have "Yes" or "No" RStudio experience.
+        </p>
+        <div class="code-block">
+            <pre><code>
+# Create a frequency table of RStudio experience
+# table() counts the occurrences of each unique value in a factor
+experience_table &lt;- table(student_data$RStudio_Experience)
+
+# Print the frequency table
+print(experience_table)
+            </code></pre>
+        </div>
+        <div class="note">
+            <strong>What to expect:</strong> A table showing the counts for "Yes" and "No" RStudio experience.
+        </div>
+
+        <div class="note">
+            <strong>Congratulations!</strong> You've just performed some fundamental data manipulation in R. This is the foundation for more complex analyses!
+        </div>
+
+        <div class="bg-gray-100 p-4 rounded-lg shadow-sm mt-8">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">What's Next?</h3>
+            <p class="text-700">
+                You've mastered the basics of R data structures! In the next session, we will move beyond small, custom datasets. We'll learn how to <strong>import and explore real-world national health data</strong>, preparing us for more in-depth statistical analysis.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
