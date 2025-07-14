@@ -17,6 +17,6 @@ A research mentor will also be available to ensure every student can follow the 
 
 ## Day 2 Worksheet
 
-The Day 1 worksheet will be used as the main worksheet for Day 2. You can access it here:
+The Day 2 worksheet will be used as the main worksheet for Day 2. You can access it here:
 [Day 2 Worksheet (Live Page)](https://drykim.github.io/SummerFX2025/day2.html)
 
