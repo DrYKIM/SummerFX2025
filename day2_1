@@ -69,72 +69,7 @@
         <h1>Statistical Analysis Worksheet: Heart Attack Prevalence by Race Group</h1>
         <p>This worksheet explores the relationship between an individual's racial group and their reported history of heart attack, using a provided R script.</p>
 
-        <h2>R Code Analysis</h2>
-        <p>Below is the R code provided. We will break down each section and analyze its purpose and output.</p>
-
-        <h3>Full R Script:</h3>
-        <pre>
-library(readr)
-df &lt;- read.csv("https://tinyurl.com/5t37tjsb")
-names(df)
-
-# Recode CVDINFR4 to align with the new NA handling for 7 and 9
-df &lt;- df %&gt;%
-  mutate(
-    CVDINFR4_Status = case_when(
-      CVDINFR4 == 1 ~ "Yes",
-      CVDINFR4 == 2 ~ "No",
-      CVDINFR4 == 7 ~ NA_character_, # Set "Don't know/Not Sure" to NA
-      CVDINFR4 == 9 ~ NA_character_, # Set "Refused" to NA
-      TRUE ~ NA_character_ # Handle NA or other unexpected values
-    ),
-    CVDINFR4_Status = factor(CVDINFR4_Status, levels = c("Yes", "No")) # Only "Yes" and "No" as levels
-  )
-
-table(df$CVDINFR4_Status)
-# Finally, multiply by 100 and round to 1 decimal place.
-cvdinfr4_proportions &lt;- round(prop.table(table(df$CVDINFR4_Status)) * 100, 1)
-print(cvdinfr4_proportions)
-
-# Calculate proportions (percentages) of Heart Attack Status within each Race Group (excluding NAs)
-# 'margin = 1' tells R to calculate percentages across the rows (i.e., within each race group)
-cvdinfr4_by_race_proportions &lt;- round(prop.table(table(df_filtered_cvd$Race_Group, df_filtered_cvd$CVDINFR4_Status), margin = 1) * 100, 1)
-
-print(cvdinfr4_by_race_proportions)
-
-# Select only the 'Yes' percentage for Heart Attack from the proportions table
-# We use square brackets [row_name, column_name] to select a specific part of the table.
-# Here, we select all rows and the column named "Yes".
-yes_heart_attack_only &lt;- cvdinfr4_by_race_proportions[, "Yes"]
-
-print(yes_heart_attack_only)
-
-# Convert the named numeric vector into a data frame suitable for ggplot.
-# The names of the vector will become the 'Race_Group' column.
-yes_heart_attack_df &lt;- data.frame(
-  Race_Group = names(yes_heart_attack_only),
-  Yes_Percentage = as.numeric(yes_heart_attack_only)
-)
-
-# Ensure Race_Group is a factor with the desired order for plotting
-yes_heart_attack_df$Race_Group &lt;- factor(yes_heart_attack_df$Race_Group,
-                                         levels = c("White, Non-Hispanic", "Black, Non-Hispanic", "Hispanic", "Other race, Non-Hispanic", "Multiracial, Non-Hispanic"))
-
-# --- Create the bar chart using ggplot2 ---
-library(ggplot2)
-ggplot(yes_heart_attack_df, aes(x = Race_Group, y = Yes_Percentage)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  labs(
-    title = "Percentage of 'Yes' Heart Attack by Race Group",
-    x = "Race Group",
-    y = "Percentage (%)"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_text(aes(label = paste0(Yes_Percentage, "%")), vjust = -0.5, size = 3.5)
-        </pre>
-
-        <h3>Code Breakdown and Analysis:</h3>
+        <h2>R Code Analysis - Step-by-Step</h2>
 
         <h4>1. Data Loading and Initial Inspection</h4>
         <p>The script begins by loading the <code>readr</code> library, which is useful for reading various data types. It then attempts to load a CSV file from a TinyURL link into a data frame named <code>df</code>. The <code>names(df)</code> command would display the column names of the loaded data.</p>
