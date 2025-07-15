@@ -15,7 +15,7 @@ Following my session, students will discuss health disparity issues further afte
 
 A research mentor will also be available to ensure every student can follow the R Intro, and can successfully import and create tables when given data and variable names.
 
-## Day 2 Worksheet
+## Day 2 Activities
 
 The Day 2 worksheet will be used as the main worksheet for Day 2. You can access it here:
 [Day 2 Worksheet (Live Page)](https://drykim.github.io/SummerFX2025/day2.html)
@@ -40,4 +40,4 @@ We can also analyze another variable, CHECKUP1, which relates to annual checkups
   Download BRFSS 2022 Codebook (Excel)
 </a>
 
-
+## Day 3 Activities
