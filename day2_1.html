@@ -116,7 +116,7 @@ print(cvdinfr4_proportions)
         <p>This section calculates the percentage of "Yes" and "No" heart attack statuses *within each racial group*. The code uses `df_filtered_cvd`, implying a data frame where NA values for race or heart attack status have been removed. `margin = 1` ensures percentages are calculated row-wise (i.e., within each race group).</p>
         <pre>
 # Calculate proportions (percentages) of Heart Attack Status within each Race Group (excluding NAs)
-cvdinfr4_by_race_proportions &lt;- round(prop.table(table(df_filtered_cvd$Race_Group, df_filtered_cvd$CVDINFR4_Status), margin = 1) * 100, 1)
+cvdinfr4_by_race_proportions &lt;- round(prop.table(table(df$Race_Group, df$CVDINFR4_Status), margin = 1) * 100, 1)
 print(cvdinfr4_by_race_proportions)
         </pre>
         <p><strong>Hypothetical Output:</strong></p>
