@@ -80,7 +80,45 @@ names(df)
         </pre>
         <p><em>Note: The TinyURL link redirects to a dataset. Ensure your environment can access external URLs.</em></p>
 
-        <h4>2. Recoding Heart Attack Status (<code>CVDINFR4_Status</code>)</h4>
+        <h4>2. Recoding Race Group and Frequency Table</h4>
+        <p>This section recodes the original <code>X_RACEGR4</code> variable into a new <code>Race_Group</code> variable with more descriptive labels. It also sets "Don't know/Not Sure/Refused" (9) and any other unexpected values to missing (<code>NA_character_</code>). Finally, it converts the new <code>Race_Group</code> variable into a factor with a specified order for consistent analysis and plotting. The <code>table()</code> command then provides a frequency count for each race group.</p>
+        <pre>
+# Recode X_RACEGR4 into clear labels and set "Don't know/Refused" (9) to NA
+df &lt;- df %&gt;%
+  mutate(
+    Race_Group = case_when(
+      X_RACEGR4 == 1 ~ "White, Non-Hispanic",
+      X_RACEGR4 == 2 ~ "Black, Non-Hispanic",
+      X_RACEGR4 == 3 ~ "Other race, Non-Hispanic",
+      X_RACEGR4 == 4 ~ "Multiracial, Non-Hispanic",
+      X_RACEGR4 == 5 ~ "Hispanic",
+      X_RACEGR4 == 9 ~ NA_character_, # Set "Don't know/Refused" to NA
+      TRUE ~ NA_character_ # Catch any other unexpected values as NA
+    ),
+    # Convert the new Race_Group variable to a factor with the correct order
+    Race_Group = factor(Race_Group, levels = c(
+      "White, Non-Hispanic",
+      "Black, Non-Hispanic",
+      "Hispanic",
+      "Other race, Non-Hispanic",
+      "Multiracial, Non-Hispanic"
+    ))
+  )
+
+# Check the new labels and counts (NAs will be excluded from this table by default)
+table(df$Race_Group)
+        </pre>
+        <p><strong>Hypothetical Output:</strong></p>
+        <pre>
+##
+##       White, Non-Hispanic       Black, Non-Hispanic                  Hispanic
+##                   320421                     35446                     42917
+##  Other race, Non-Hispanic Multiracial, Non-Hispanic
+##                    22713                      9578
+        </pre>
+        <p><em>Interpretation:</em> This table shows the number of respondents in each recoded racial group. For instance, in this hypothetical dataset, there are 320,421 White, Non-Hispanic respondents and 35,446 Black, Non-Hispanic respondents.</p>
+
+        <h4>3. Recoding Heart Attack Status (<code>CVDINFR4_Status</code>)</h4>
         <p>This section uses the <code>dplyr</code> package (implied by <code>mutate</code> and <code>case_when</code>, though <code>library(dplyr)</code> is not explicitly shown in the snippet) to create a new variable <code>CVDINFR4_Status</code> from the original <code>CVDINFR4</code> variable. This recoding simplifies the responses into "Yes" (for heart attack) and "No," while converting "Don't know/Not Sure" (7) and "Refused" (9) into missing values (<code>NA_character_</code>).</p>
         <pre>
 # Recode CVDINFR4 to align with the new NA handling for 7 and 9
@@ -97,7 +135,7 @@ df &lt;- df %&gt;%
   )
         </pre>
 
-        <h4>3. Overall Proportions of Heart Attack Status</h4>
+        <h4>4. Overall Proportions of Heart Attack Status</h4>
         <p>This part calculates the total count and then the percentage of individuals who reported "Yes" or "No" for heart attack status across the entire dataset (excluding NAs).</p>
         <pre>
 table(df$CVDINFR4_Status)
@@ -112,8 +150,8 @@ print(cvdinfr4_proportions)
         </pre>
         <p><em>Interpretation:</em> Approximately 4.8% of the surveyed population reported having had a heart attack, while 95.2% reported not having one.</p>
 
-        <h4>4. Proportions of Heart Attack Status by Race Group</h4>
-        <p>This section calculates the percentage of "Yes" and "No" heart attack statuses *within each racial group*. The code uses `df_filtered_cvd`, implying a data frame where NA values for race or heart attack status have been removed. `margin = 1` ensures percentages are calculated row-wise (i.e., within each race group).</p>
+        <h4>5. Proportions of Heart Attack Status by Race Group</h4>
+        <p>This section calculates the percentage of "Yes" and "No" heart attack statuses *within each racial group*. The code uses `df`, implying that `Race_Group` is now a variable within `df` and NA values for race or heart attack status have been removed. `margin = 1` ensures percentages are calculated row-wise (i.e., within each race group).</p>
         <pre>
 # Calculate proportions (percentages) of Heart Attack Status within each Race Group (excluding NAs)
 cvdinfr4_by_race_proportions &lt;- round(prop.table(table(df$Race_Group, df$CVDINFR4_Status), margin = 1) * 100, 1)
@@ -131,7 +169,7 @@ print(cvdinfr4_by_race_proportions)
         </pre>
         <p><em>Interpretation:</em> This table shows the percentage of "Yes" and "No" for heart attack diagnosis for each specified racial group. For instance, 5.0% of White, Non-Hispanic individuals reported a heart attack, compared to 6.5% of Black, Non-Hispanic individuals in this hypothetical dataset.</p>
 
-        <h4>5. Extracting "Yes" Percentages for Plotting</h4>
+        <h4>6. Extracting "Yes" Percentages for Plotting</h4>
         <p>This step extracts only the "Yes" percentages for heart attack from the cross-tabulation table, preparing the data for visualization.</p>
         <pre>
 yes_heart_attack_only &lt;- cvdinfr4_by_race_proportions[, "Yes"]
@@ -146,7 +184,7 @@ print(yes_heart_attack_only)
         </pre>
         <p><em>Interpretation:</em> This is a simplified list showing only the "Yes" percentage for heart attack prevalence for each racial group.</p>
 
-        <h4>6. Data Preparation for Plotting (<code>ggplot2</code>)</h4>
+        <h4>7. Data Preparation for Plotting (<code>ggplot2</code>)</h4>
         <p>The extracted "Yes" percentages are converted into a data frame suitable for plotting with <code>ggplot2</code>. The `Race_Group` variable is also explicitly ordered to ensure the bar chart displays the groups in a specific sequence.</p>
         <pre>
 # Convert the named numeric vector into a data frame suitable for ggplot.
@@ -160,7 +198,7 @@ yes_heart_attack_df$Race_Group &lt;- factor(yes_heart_attack_df$Race_Group,
                                          levels = c("White, Non-Hispanic", "Black, Non-Hispanic", "Hispanic", "Other race, Non-Hispanic", "Multiracial, Non-Hispanic"))
         </pre>
 
-        <h4>7. Creating the Bar Chart</h4>
+        <h4>8. Creating the Bar Chart</h4>
         <p>Finally, the <code>ggplot2</code> library is loaded, and a bar chart is generated. The chart visualizes the "Percentage of 'Yes' Heart Attack by Race Group," with x-axis labels rotated for readability and percentage labels added on top of each bar.</p>
         <pre>
 library(ggplot2)
