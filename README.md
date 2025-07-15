@@ -22,6 +22,10 @@ The Day 2 worksheet will be used as the main worksheet for Day 2. You can access
 
 After you finish, you can analyze another variable, CVDINFR4, which indicates heart attack status. Please refer to the step-by-step guide for data analysis provided in the link.
 https://drykim.github.io/SummerFX2025/day2_1.html
+
+We can also analyze another variable, CHECKUP1, which relates to annual checkups. Please refer to the step-by-step data analysis guide provided at the following link:
+
+<a href="https://drykim.github.io/SummerFX2025/day2_2_checkup.html" target="_blank"> Step-by-Step Guide: Analyzing Annual Checkups (`CHECKUP1`) </a>
 <p>
   For detailed information about other variables in the dataset, please refer to the codebook below:
 </p>
