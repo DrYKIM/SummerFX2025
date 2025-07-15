@@ -22,3 +22,13 @@ The Day 2 worksheet will be used as the main worksheet for Day 2. You can access
 
 After you finish, you can analyze another variable, CVDINFR4, which indicates heart attack status. Please refer to the step-by-step guide for data analysis provided in the link.
 https://drykim.github.io/SummerFX2025/day2_1.html
+For the information about other variable in the data, you can refer to this codebook. 
+<a href="https://github.com/DrYKIM/SummerFX2025/raw/main/BRFSS%202022%20Codebook%20PFX%202025.xlsx" download style="
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1d72b8;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;">
+  Download BRFSS Codebook (Excel)
+</a>
