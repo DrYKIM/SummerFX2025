@@ -116,7 +116,7 @@ print(checkup_proportions)
         <p>This section calculates the percentage of each annual check-up status *within each racial group*. The code assumes a filtered data frame (e.g., `df_filtered_checkup`) is used, where NA values for race or check-up status have been removed. `margin = 1` ensures percentages are calculated row-wise (i.e., within each race group).</p>
         <pre>
 # Calculate proportions (percentages) of Annual Check-up Status within each Race Group (excluding NAs)
-checkup_by_race_proportions &lt;- round(prop.table(table(df_filtered_checkup$Race_Group, df_filtered_checkup$CHECKUP1_Group), margin = 1) * 100, 1)
+checkup_by_race_proportions &lt;- round(prop.table(table(df$Race_Group, df$CHECKUP1_Group), margin = 1) * 100, 1)
 print(checkup_by_race_proportions)
         </pre>
         <p><strong>Hypothetical Output:</strong></p>
