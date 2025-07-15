@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Analysis Worksheet: Annual Check-up by Race</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap; /* Ensures long lines wrap */
+            word-wrap: break-word; /* Ensures long words break */
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #e0e0e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ol {
+            margin-left: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Statistical Analysis Worksheet: Annual Check-up Prevalence by Race Group</h1>
+        <p>This worksheet explores the relationship between an individual's racial group and their reported frequency of annual check-ups, using a simulated R script analysis.</p>
+
+        <h2>R Code Analysis - Step-by-Step</h2>
+
+        <h4>1. Data Loading and Initial Inspection</h4>
+        <p>The script begins by loading the <code>readr</code> library, which is useful for reading various data types. It then attempts to load a CSV file from a TinyURL link into a data frame named <code>df</code>. The <code>names(df)</code> command would display the column names of the loaded data.</p>
+        <pre>
+library(readr)
+df &lt;- read.csv("https://tinyurl.com/5t37tjsb")
+names(df)
+        </pre>
+        <p><em>Note: The TinyURL link redirects to a dataset. Ensure your environment can access external URLs.</em></p>
+
+        <h4>2. Recoding Annual Check-up Status (<code>CHECKUP1_Group</code>)</h4>
+        <p>This section uses the <code>dplyr</code> package (implied by <code>mutate</code> and <code>case_when</code>) to create a new variable <code>CHECKUP1_Group</code> from the original <code>CHECKUP1</code> variable. This recoding groups responses into three main categories: "Within past 2 years", "Within 5 years or longer", and "Never". "Don't know/Not Sure" (7), "Refused" (9), and any original missing values are converted to <code>NA_character_</code>.</p>
+        <pre>
+# Recode CHECKUP1 into CHECKUP1_Group
+df &lt;- df %&gt;%
+  mutate(
+    CHECKUP1_Group = case_when(
+      CHECKUP1 %in% c(1, 2) ~ "Within past 2 years",
+      CHECKUP1 %in% c(3, 4) ~ "Within 5 years or longer",
+      CHECKUP1 == 8 ~ "Never",
+      CHECKUP1 %in% c(7, 9) ~ NA_character_, # Don't know/Not Sure/Refused to NA
+      TRUE ~ NA_character_ # Handle other unexpected values or original NAs
+    ),
+    CHECKUP1_Group = factor(CHECKUP1_Group, levels = c("Within past 2 years", "Within 5 years or longer", "Never"))
+  )
+        </pre>
+
+        <h4>3. Overall Proportions of Annual Check-up Status</h4>
+        <p>This part calculates the total count and then the percentage of individuals in each <code>CHECKUP1_Group</code> category across the entire dataset (excluding NAs).</p>
+        <pre>
+table(df$CHECKUP1_Group)
+checkup_proportions &lt;- round(prop.table(table(df$CHECKUP1_Group)) * 100, 1)
+print(checkup_proportions)
+        </pre>
+        <p><strong>Hypothetical Output:</strong></p>
+        <pre>
+##
+## Within past 2 years Within 5 years or longer           Never
+##                70.0                     25.0             5.0
+        </pre>
+        <p><em>Interpretation:</em> Approximately 70.0% of the surveyed population had a check-up within the past 2 years, 25.0% within 5 years or longer, and 5.0% never had one.</p>
+
+        <h4>4. Proportions of Annual Check-up Status by Race Group</h4>
+        <p>This section calculates the percentage of each annual check-up status *within each racial group*. The code assumes a filtered data frame (e.g., `df_filtered_checkup`) is used, where NA values for race or check-up status have been removed. `margin = 1` ensures percentages are calculated row-wise (i.e., within each race group).</p>
+        <pre>
+# Calculate proportions (percentages) of Annual Check-up Status within each Race Group (excluding NAs)
+checkup_by_race_proportions &lt;- round(prop.table(table(df_filtered_checkup$Race_Group, df_filtered_checkup$CHECKUP1_Group), margin = 1) * 100, 1)
+print(checkup_by_race_proportions)
+        </pre>
+        <p><strong>Hypothetical Output:</strong></p>
+        <pre>
+##                          CHECKUP1_Group
+## Race_Group                  Within past 2 years Within 5 years or longer Never
+##   White, Non-Hispanic                     72.0                     23.0   5.0
+##   Black, Non-Hispanic                     65.0                     30.0   5.0
+##   Hispanic                                75.0                     20.0   5.0
+##   Other race, Non-Hispanic                68.0                     28.0   4.0
+##   Multiracial, Non-Hispanic               70.0                     26.0   4.0
+        </pre>
+        <p><em>Interpretation:</em> This table shows the percentage distribution of annual check-up frequency for each specified racial group. For example, 72.0% of White, Non-Hispanic individuals had a check-up within the past 2 years, while 65.0% of Black, Non-Hispanic individuals did in this hypothetical dataset.</p>
+
+        <h4>5. Extracting "Within past 2 years" Percentages for Plotting</h4>
+        <p>This step extracts only the percentage of individuals who had a check-up "Within past 2 years" from the cross-tabulation table, preparing the data for visualization.</p>
+        <pre>
+within_2_years_only &lt;- checkup_by_race_proportions[, "Within past 2 years"]
+print(within_2_years_only)
+        </pre>
+        <p><strong>Hypothetical Output:</strong></p>
+        <pre>
+##   White, Non-Hispanic   Black, Non-Hispanic              Hispanic
+##                   72.0                   65.0                   75.0
+## Other race, Non-Hispanic Multiracial, Non-Hispanic
+##                   68.0                   70.0
+        </pre>
+        <p><em>Interpretation:</em> This is a simplified list showing only the percentage of individuals who had a check-up within the past 2 years for each racial group.</p>
+
+        <h4>6. Data Preparation for Plotting (<code>ggplot2</code>)</h4>
+        <p>The extracted percentages are converted into a data frame suitable for plotting with <code>ggplot2</code>. The `Race_Group` variable is also explicitly ordered to ensure the bar chart displays the groups in a specific sequence.</p>
+        <pre>
+# Convert the named numeric vector into a data frame suitable for ggplot.
+within_2_years_df &lt;- data.frame(
+  Race_Group = names(within_2_years_only),
+  Yes_Percentage = as.numeric(within_2_years_only)
+)
+
+# Ensure Race_Group is a factor with the desired order for plotting
+within_2_years_df$Race_Group &lt;- factor(within_2_years_df$Race_Group,
+                                         levels = c("White, Non-Hispanic", "Black, Non-Hispanic", "Hispanic", "Other race, Non-Hispanic", "Multiracial, Non-Hispanic"))
+        </pre>
+
+        <h4>7. Creating the Bar Chart</h4>
+        <p>Finally, the <code>ggplot2</code> library is loaded, and a bar chart is generated. The chart visualizes the "Percentage of 'Within past 2 years' Check-up by Race Group," with x-axis labels rotated for readability and percentage labels added on top of each bar.</p>
+        <pre>
+library(ggplot2)
+ggplot(within_2_years_df, aes(x = Race_Group, y = Yes_Percentage)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Percentage of 'Within past 2 years' Check-up by Race Group",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(Yes_Percentage, "%")), vjust = -0.5, size = 3.5)
+        </pre>
+        <p><em>Interpretation:</em> The resulting bar chart visually compares the prevalence of having a check-up within the past 2 years across different racial groups, making trends and differences easy to observe.</p>
+
+    </div>
+</body>
+</html>
