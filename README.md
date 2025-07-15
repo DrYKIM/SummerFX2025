@@ -20,3 +20,5 @@ A research mentor will also be available to ensure every student can follow the 
 The Day 2 worksheet will be used as the main worksheet for Day 2. You can access it here:
 [Day 2 Worksheet (Live Page)](https://drykim.github.io/SummerFX2025/day2.html)
 
+After you finish, you can analyze another variable, CVDINFR4, which indicates heart attack status. Please refer to the step-by-step guide for data analysis provided in the link.
+https://drykim.github.io/SummerFX2025/day2_1.html
