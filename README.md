@@ -42,10 +42,13 @@ We can also analyze another variable, CHECKUP1, which relates to annual checkups
 
 ## Day 3 Activities
 The Day 3 activities will include creating bar charts based on the frequency tables by race that we generated earlier.
-
+<p>
 Step-by-step guide: Creating a bar chart for heart attack by race
 https://drykim.github.io/SummerFX2025/day3_heart.html
-Step-by-step guide: Creating a bar chart for annual checkup by race (link coming soon or add here)
+  </p>
+Step-by-step guide: Creating a bar chart for annual checkup by race
+https://drykim.github.io/SummerFX2025/day3_checkup.html
+
 
 
 
