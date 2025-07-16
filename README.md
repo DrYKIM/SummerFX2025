@@ -50,5 +50,5 @@ Step-by-step guide: Creating a bar chart for annual checkup by race
 https://drykim.github.io/SummerFX2025/day3_checkup.html
 
 
-
+## Day 4 Activities
 
