@@ -52,3 +52,4 @@ https://drykim.github.io/SummerFX2025/day3_checkup.html
 
 ## Day 4 Activities
 
+https://drykim.github.io/SummerFX2025/day4_heart_income.html
