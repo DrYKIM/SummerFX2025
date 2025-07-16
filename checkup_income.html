@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annual Check-up by Race and Income Group Worksheet</title>
+    <!-- Tailwind CSS CDN for basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2, h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #4299e1;
+            border-bottom: 2px solid #ebf8ff;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #4c51bf;
+            margin-top: 2rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        a {
+            color: #4299e1;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Statistical Analysis Worksheet: Annual Check-up Rates by Race and Income Group</h1>
+
+        <p>This worksheet guides you through the process of analyzing annual check-up rates, stratified by racial group and further broken down by income level (higher vs. lower income). We will use R with <code>dplyr</code> for data manipulation and <code>ggplot2</code> for visualization.</p>
+
+        <p class="text-center text-lg text-gray-600 mb-8">
+            This worksheet assumes that the <code>Race_Group</code>, <code>CHECKUP1_Group</code> (annual check-up status), and <code>Income_Group</code> variables have already been created in your dataset (<code>df</code>). If you need to create these variables, please refer to the
+            <a href="https://drykim.github.io/SummerFX2025/day4_heart_income.html" class="text-blue-600 hover:underline" target="_blank">Day 4 Heart Attack by Income Worksheet</a>.
+        </p>
+
+        <h2>Data Preparation</h2>
+
+        <p>Ensure you have loaded the necessary R libraries:</p>
+<pre><code>library(readr)
+library(dplyr)
+library(ggplot2)
+</code></pre>
+
+        <h2>Analysis: Proportions of Annual Check-up Status by Race and Income</h2>
+
+        <p>Now, we will calculate the percentage of "Within past 2 years" annual check-up statuses <em>within each racial group, separately for each income group</em>. We will filter out missing values for <code>Race_Group</code>, <code>CHECKUP1_Group</code>, and <code>Income_Group</code> as part of this aggregation.</p>
+
+<pre><code># Calculate proportions (percentages) of Annual Check-up Status within each Race Group and Income Group
+checkup_by_race_income_proportions &lt;- df %&gt;%
+  filter(!is.na(Race_Group) &amp; !is.na(CHECKUP1_Group) &amp; !is.na(Income_Group)) %&gt;% # Filter missing values here
+  group_by(Income_Group, Race_Group) %&gt;%
+  count(CHECKUP1_Group) %&gt;%
+  mutate(percentage = n / sum(n) * 100) %&gt;%
+  filter(CHECKUP1_Group == "Within past 2 years") %&gt;% # Focusing on "Within past 2 years" for plotting
+  ungroup()
+
+# Display the results
+print(checkup_by_race_income_proportions)
+</code></pre>
+
+        <h2>Creating Bar Charts with ggplot2</h2>
+
+        <p>We will create two separate bar charts, one for "Lower Income" and one for "Higher Income", to clearly visualize the racial disparities within each income bracket. An optional combined faceted chart is also provided.</p>
+
+        <h3>1. Load the <code>ggplot2</code> Library</h3>
+
+<pre><code>library(ggplot2)
+</code></pre>
+
+        <h3>2. Prepare Data for Plotting</h3>
+        <p>The <code>checkup_by_race_income_proportions</code> data frame is already in a suitable format for <code>ggplot2</code>.</p>
+
+        <h3>3. Create the Bar Charts</h3>
+
+        <h4>Bar Chart for Lower Income Group:</h4>
+<pre><code>lower_income_checkup_data &lt;- checkup_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Lower Income (&lt; $50,000)")
+
+ggplot(lower_income_checkup_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Percentage of 'Within past 2 years' Check-up by Race Group (Lower Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h4>Bar Chart for Higher Income Group:</h4>
+<pre><code>higher_income_checkup_data &lt;- checkup_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Higher Income (&gt;= $50,000)")
+
+ggplot(higher_income_checkup_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "darkred") + # Using a different color for distinction
+  labs(
+    title = "Percentage of 'Within past 2 years' Check-up by Race Group (Higher Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h4>Optional: Faceted Bar Chart (Combined View)</h4>
+        <p>You can also create a single plot with separate panels for each income group using <code>facet_wrap()</code>. This is often a more compact way to compare.</p>
+
+<pre><code>ggplot(checkup_by_race_income_proportions, aes(x = Race_Group, y = percentage, fill = Income_Group)) +
+  geom_bar(stat = "identity", position = "dodge") + # 'dodge' for side-by-side bars if not faceting
+  facet_wrap(~ Income_Group, scales = "free_y") + # Separate panels for each income group
+  labs(
+    title = "Percentage of 'Within past 2 years' Check-up by Race Group and Income",
+    x = "Race Group",
+    y = "Percentage (%)",
+    fill = "Income Group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5,
+            position = position_dodge(width = 0.9)) + # Adjust text position for dodged bars
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h2>Interpretation</h2>
+
+        <p>By examining these charts, you can visually compare the prevalence of annual check-ups across different racial groups, and critically, how these disparities might differ between lower and higher income populations. This allows for a more nuanced understanding of health outcomes and access to care.</p>
+    </div>
+</body>
+</html>
