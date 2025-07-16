@@ -90,9 +90,12 @@
 
         <p>This worksheet guides you through creating bar charts to examine the percentage of individuals who reported a heart attack, stratified by racial group and further broken down by income level (higher vs. lower income). We will continue using R with <code>dplyr</code> for data manipulation and <code>ggplot2</code> for visualization.</p>
 
-        <h2>Review: Data Preparation and New Income Grouping</h2>
+        <p class="text-center text-lg text-gray-600 mb-8">
+            For students who need to start from the beginning, please refer to the initial data loading and recoding of <code>Race_Group</code> and <code>CVDINFR4_Status</code> in the
+            <a href="https://drykim.github.io/SummerFX2025/day3_heart.html" class="text-blue-600 hover:underline" target="_blank">Day 3 Heart Attack Analysis Worksheet</a>.
+        </p>
 
-        <p>For the initial data loading and recoding of <code>Race_Group</code> and <code>CVDINFR4_Status</code>, please refer to the data preparation steps outlined in the <a href="https://drykim.github.io/SummerFX2025/day3_heart.html" target="_blank">Statistical Analysis Worksheet: Creating a Bar Chart with ggplot2 (Day 3)</a>.</p>
+        <h2>Review: Data Preparation and New Income Grouping</h2>
 
         <p>We will assume <code>df</code> is already loaded and <code>Race_Group</code> and <code>CVDINFR4_Status</code> are recoded as per the Day 3 worksheet.</p>
 
@@ -124,7 +127,7 @@
     Income_Group = factor(Income_Group, levels = c("Lower Income (&lt; $50,000)", "Higher Income (&gt;= $50,000)"))
   )
 # Check the new labels and counts
-# table(df$Income_Group)
+table(df$Income_Group)
 </code></pre>
 
         <h2>Analysis: Proportions of Heart Attack Status by Race and Income</h2>
@@ -141,13 +144,7 @@ cvdinfr4_by_race_income_proportions &lt;- df %&gt;%
   ungroup()
 
 # Display the results
-# print(cvdinfr4_by_race_income_proportions)
-
-# You might want to pivot wider for easier viewing or plotting if needed
-# cvdinfr4_by_race_income_proportions_wide &lt;- cvdinfr4_by_race_income_proportions %&gt;%
-#   select(-n) %&gt;%
-#   pivot_wider(names_from = CVDINFR4_Status, values_from = percentage, values_fill = 0)
-# print(cvdinfr4_by_race_income_proportions_wide)
+print(cvdinfr4_by_race_income_proportions)
 </code></pre>
 
         <h2>Creating Bar Charts with ggplot2</h2>
@@ -177,7 +174,8 @@ ggplot(lower_income_data, aes(x = Race_Group, y = percentage)) +
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5)
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Added to prevent labels from being cut off
 </code></pre>
 
         <h4>Bar Chart for Higher Income Group:</h4>
@@ -193,7 +191,8 @@ ggplot(higher_income_data, aes(x = Race_Group, y = percentage)) +
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5)
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Added to prevent labels from being cut off
 </code></pre>
 
         <h4>Optional: Faceted Bar Chart (Combined View)</h4>
@@ -211,7 +210,8 @@ ggplot(higher_income_data, aes(x = Race_Group, y = percentage)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5,
-            position = position_dodge(width = 0.9)) # Adjust text position for dodged bars
+            position = position_dodge(width = 0.9)) + # Adjust text position for dodged bars
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Added to prevent labels from being cut off
 </code></pre>
 
         <h2>Interpretation</h2>
