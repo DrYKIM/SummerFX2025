@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4 Worksheet: Heart Attack by Race and Income</title>
+    <!-- Tailwind CSS CDN for basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2, h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #4299e1;
+            border-bottom: 2px solid #ebf8ff;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #4c51bf;
+            margin-top: 2rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        a {
+            color: #4299e1;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Statistical Analysis Worksheet: Creating Bar Charts of Heart Attack by Race, Grouped by Income</h1>
+
+        <p>This worksheet guides you through creating bar charts to examine the percentage of individuals who reported a heart attack, stratified by racial group and further broken down by income level (higher vs. lower income). We will continue using R with <code>dplyr</code> for data manipulation and <code>ggplot2</code> for visualization.</p>
+
+        <h2>Review: Data Preparation and New Income Grouping</h2>
+
+        <p>For the initial data loading and recoding of <code>Race_Group</code> and <code>CVDINFR4_Status</code>, please refer to the data preparation steps outlined in the <a href="https://drykim.github.io/SummerFX2025/day3_heart.html" target="_blank">Statistical Analysis Worksheet: Creating a Bar Chart with ggplot2 (Day 3)</a>.</p>
+
+        <p>We will assume <code>df</code> is already loaded and <code>Race_Group</code> and <code>CVDINFR4_Status</code> are recoded as per the Day 3 worksheet.</p>
+
+        <h3>NEW: Recoding Income Group (<code>Income_Group</code>)</h3>
+
+        <p>Now, we'll create a new variable <code>Income_Group</code> based on <code>INCOME3</code>, dividing respondents into "Lower Income" (less than $50,000) and "Higher Income" ($50,000 or more). We will also handle missing values.</p>
+
+        <ul>
+            <li><strong>INCOME3 Coding:</strong></li>
+            <li>1: Less than $15,000</li>
+            <li>2: $15,000 to $24,999</li>
+            <li>3: $25,000 to $34,999</li>
+            <li>4: $35,000 to $49,999</li>
+            <li>5: $50,000 to $99,999</li>
+            <li>6: $100,000 or more</li>
+            <li>7: Don't know/Not Sure</li>
+            <li>8: Refused</li>
+            <li>BLANK: Not asked or Missing</li>
+        </ul>
+
+<pre><code>df &lt;- df %&gt;%
+  mutate(
+    Income_Group = case_when(
+      INCOME3 %in% c(1, 2, 3, 4) ~ "Lower Income (&lt; $50,000)",
+      INCOME3 %in% c(5, 6) ~ "Higher Income (&gt;= $50,000)",
+      INCOME3 %in% c(7, 8) ~ NA_character_, # Handle Don't know/Refused
+      TRUE ~ NA_character_ # Handle other unexpected values or blanks
+    ),
+    Income_Group = factor(Income_Group, levels = c("Lower Income (&lt; $50,000)", "Higher Income (&gt;= $50,000)"))
+  )
+# Check the new labels and counts
+# table(df$Income_Group)
+</code></pre>
+
+        <h2>Analysis: Proportions of Heart Attack Status by Race and Income</h2>
+
+        <p>Now, we will calculate the percentage of "Yes" heart attack statuses <em>within each racial group, separately for each income group</em>. We will filter out missing values for <code>Race_Group</code>, <code>CVDINFR4_Status</code>, and <code>Income_Group</code> as part of this aggregation.</p>
+
+<pre><code># Calculate proportions (percentages) of Heart Attack Status within each Race Group and Income Group
+cvdinfr4_by_race_income_proportions &lt;- df %&gt;%
+  filter(!is.na(Race_Group) &amp; !is.na(CVDINFR4_Status) &amp; !is.na(Income_Group)) %&gt;% # Filter missing values here
+  group_by(Income_Group, Race_Group) %&gt;%
+  count(CVDINFR4_Status) %&gt;%
+  mutate(percentage = n / sum(n) * 100) %&gt;%
+  filter(CVDINFR4_Status == "Yes") %&gt;%
+  ungroup()
+
+# Display the results
+# print(cvdinfr4_by_race_income_proportions)
+
+# You might want to pivot wider for easier viewing or plotting if needed
+# cvdinfr4_by_race_income_proportions_wide &lt;- cvdinfr4_by_race_income_proportions %&gt;%
+#   select(-n) %&gt;%
+#   pivot_wider(names_from = CVDINFR4_Status, values_from = percentage, values_fill = 0)
+# print(cvdinfr4_by_race_income_proportions_wide)
+</code></pre>
+
+        <h2>Creating Bar Charts with ggplot2</h2>
+
+        <p>We will create two separate bar charts, one for "Lower Income" and one for "Higher Income", to clearly visualize the racial disparities within each income bracket.</p>
+
+        <h3>1. Load the <code>ggplot2</code> Library</h3>
+
+<pre><code>library(ggplot2)
+</code></pre>
+
+        <h3>2. Prepare Data for Plotting</h3>
+        <p>The <code>cvdinfr4_by_race_income_proportions</code> data frame is already in a suitable format for <code>ggplot2</code>.</p>
+
+        <h3>3. Create the Bar Charts</h3>
+
+        <h4>Bar Chart for Lower Income Group:</h4>
+<pre><code>lower_income_data &lt;- cvdinfr4_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Lower Income (&lt; $50,000)")
+
+ggplot(lower_income_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Percentage of 'Yes' Heart Attack by Race Group (Lower Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5)
+</code></pre>
+
+        <h4>Bar Chart for Higher Income Group:</h4>
+<pre><code>higher_income_data &lt;- cvdinfr4_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Higher Income (&gt;= $50,000)")
+
+ggplot(higher_income_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "darkred") + # Using a different color for distinction
+  labs(
+    title = "Percentage of 'Yes' Heart Attack by Race Group (Higher Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5)
+</code></pre>
+
+        <h4>Optional: Faceted Bar Chart (Combined View)</h4>
+        <p>You can also create a single plot with separate panels for each income group using <code>facet_wrap()</code>. This is often a more compact way to compare.</p>
+
+<pre><code>ggplot(cvdinfr4_by_race_income_proportions, aes(x = Race_Group, y = percentage, fill = Income_Group)) +
+  geom_bar(stat = "identity", position = "dodge") + # 'dodge' for side-by-side bars if not faceting
+  facet_wrap(~ Income_Group, scales = "free_y") + # Separate panels for each income group
+  labs(
+    title = "Percentage of 'Yes' Heart Attack by Race Group and Income",
+    x = "Race Group",
+    y = "Percentage (%)",
+    fill = "Income Group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5,
+            position = position_dodge(width = 0.9)) # Adjust text position for dodged bars
+</code></pre>
+
+        <h2>Interpretation</h2>
+
+        <p>By examining these charts, you can visually compare the prevalence of heart attacks across different racial groups, and critically, how these disparities might differ between lower and higher income populations. This allows for a more nuanced understanding of health outcomes.</p>
+    </div>
+</body>
+</html>
