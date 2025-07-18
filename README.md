@@ -64,4 +64,7 @@ Diabete:
 https://drykim.github.io/SummerFX2025/day5_diabete.html
 
 Ashthma:
+https://drykim.github.io/SummerFX2025/day5_ashthma.html
 
+Obesity:
+https://drykim.github.io/SummerFX2025/day5_obesity.html
