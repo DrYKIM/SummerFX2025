@@ -58,3 +58,7 @@ First, we will focus on the heart attack experience by race, stratified by incom
 https://drykim.github.io/SummerFX2025/day4_heart_income.html
 
 Second, we will create charts to visualize annual check-up rates by race, also broken down by income level. The relevant R code and instructions are available in this worksheet: https://drykim.github.io/SummerFX2025/day4_checkup_income.html
+
+## Day 5 Optional Activities
+https://g.co/gemini/share/165f19f95821
+
