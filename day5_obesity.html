@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obesity Prevalence by Race and Income Group Worksheet</title>
+    <!-- Tailwind CSS CDN for basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        h1, h2, h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 3rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #4299e1;
+            border-bottom: 2px solid #ebf8ff;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #4c51bf;
+            margin-top: 2rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        a {
+            color: #4299e1;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Day5 Statistical Analysis Worksheet: Obesity Prevalence by Race and Income Group</h1>
+
+        <p>This worksheet focuses on the R code for analyzing obesity prevalence by race and income group, assuming your data (<code>df</code>) is already loaded in your R environment.</p>
+
+        <p class="text-center text-lg text-gray-600 mb-8">
+            For those who need to review how to create the <code>Race_Group</code> and <code>Income_Group</code> variables, please refer to the
+            <a href="https://drykim.github.io/SummerFX2025/day4_heart_income.html" class="text-blue-600 hover:underline" target="_blank">Day 4 Heart Attack by Income Worksheet</a>.
+        </p>
+
+        <h2>Data Preparation: Create <code>Obesity_Status_Group</code> Variable</h2>
+        <p>This step categorizes the <code>_BMI5CAT</code> variable into meaningful groups for analysis, specifically identifying "Obese" individuals.</p>
+        <ul>
+            <li><strong>_BMI5CAT Coding:</strong></li>
+            <li>1: Underweight</li>
+            <li>2: Normal Weight</li>
+            <li>3: Overweight</li>
+            <li>4: Obese</li>
+            <li>BLANK: Not asked or Missing</li>
+        </ul>
+
+<pre><code># --- Create Obesity_Status_Group Variable ---
+# This step is crucial to categorize _BMI5CAT into meaningful groups for analysis.
+df &lt;- df %&gt;%
+  mutate(
+    Obesity_Status_Group = case_when(
+      _BMI5CAT == 1 ~ "Underweight",
+      _BMI5CAT == 2 ~ "Normal Weight",
+      _BMI5CAT == 3 ~ "Overweight",
+      _BMI5CAT == 4 ~ "Obese",
+      TRUE ~ NA_character_ # Catch any other unexpected values or blanks as missing
+    ),
+    Obesity_Status_Group = factor(Obesity_Status_Group, levels = c("Underweight", "Normal Weight", "Overweight", "Obese"))
+  )
+# table(df$Obesity_Status_Group)
+</code></pre>
+
+        <h2>Analysis: Proportions of Obesity Status by Race and Income</h2>
+        <p>This code calculates the percentage of "Obese" statuses within each racial group, separately for each income group, filtering out missing values.</p>
+
+<pre><code># Calculate proportions (percentages) of Obesity Status within each Race Group and Income Group
+obesity_by_race_income_proportions &lt;- df %&gt;%
+  filter(!is.na(Race_Group) &amp; !is.na(Obesity_Status_Group) &amp; !is.na(Income_Group)) %&gt;% # Filter missing values
+  group_by(Income_Group, Race_Group) %&gt;%
+  count(Obesity_Status_Group) %&gt;%
+  mutate(percentage = n / sum(n) * 100) %&gt;%
+  filter(Obesity_Status_Group == "Obese") %&gt;% # Focusing on "Obese" for plotting
+  ungroup()
+
+# Display the results
+print(obesity_by_race_income_proportions)
+</code></pre>
+
+        <h2>Creating Bar Charts with ggplot2</h2>
+        <p>This section provides the R code for generating the bar charts, including the faceted chart with a fixed y-axis for better comparison.</p>
+
+        <h3>Load the <code>ggplot2</code> Library</h3>
+<pre><code>library(ggplot2)
+</code></pre>
+
+        <h3>Bar Chart for Lower Income Group:</h3>
+<pre><code>lower_income_obesity_data &lt;- obesity_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Lower Income (&lt; $50,000)")
+
+ggplot(lower_income_obesity_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(
+    title = "Percentage of Obese Individuals by Race Group (Lower Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h3>Bar Chart for Higher Income Group:</h3>
+<pre><code>higher_income_obesity_data &lt;- obesity_by_race_income_proportions %&gt;%
+  filter(Income_Group == "Higher Income (&gt;= $50,000)")
+
+ggplot(higher_income_obesity_data, aes(x = Race_Group, y = percentage)) +
+  geom_bar(stat = "identity", fill = "darkred") + # Using a different color for distinction
+  labs(
+    title = "Percentage of Obese Individuals by Race Group (Higher Income)",
+    x = "Race Group",
+    y = "Percentage (%)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h3>Optional: Faceted Bar Chart (Combined View) with fixed y-axis</h3>
+<pre><code>ggplot(obesity_by_race_income_proportions, aes(x = Race_Group, y = percentage, fill = Income_Group)) +
+  geom_bar(stat = "identity", position = "dodge") + # 'dodge' for side-by-side bars if not faceting
+  facet_wrap(~ Income_Group, scales = "fixed") + # 'fixed' ensures consistent y-axis range across facets
+  labs(
+    title = "Percentage of Obese Individuals by Race Group and Income",
+    x = "Race Group",
+    y = "Percentage (%)",
+    fill = "Income Group"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5,
+            position = position_dodge(width = 0.9)) + # Adjust text position for dodged bars
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) # Adjust y-axis to prevent labels from being cut off
+</code></pre>
+
+        <h2>Interpretation</h2>
+
+        <p>By examining these charts, you can visually compare the prevalence of obesity across different racial groups, and critically, how these disparities might differ between lower and higher income populations. This allows for a more nuanced understanding of health outcomes and potential socioeconomic factors related to BMI.</p>
+    </div>
+</body>
+</html>
