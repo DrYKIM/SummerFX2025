@@ -111,15 +111,15 @@
 df &lt;- df %&gt;%
   mutate(
     Obesity_Status_Group = case_when(
-      _BMI5CAT == 1 ~ "Underweight",
-      _BMI5CAT == 2 ~ "Normal Weight",
-      _BMI5CAT == 3 ~ "Overweight",
-      _BMI5CAT == 4 ~ "Obese",
+      X_BMI5CAT == 1 ~ "Underweight",
+      X_BMI5CAT == 2 ~ "Normal Weight",
+      X_BMI5CAT == 3 ~ "Overweight",
+      X_BMI5CAT == 4 ~ "Obese",
       TRUE ~ NA_character_ # Catch any other unexpected values or blanks as missing
     ),
     Obesity_Status_Group = factor(Obesity_Status_Group, levels = c("Underweight", "Normal Weight", "Overweight", "Obese"))
   )
-# table(df$Obesity_Status_Group)
+table(df$Obesity_Status_Group)
 </code></pre>
 
         <h2>Analysis: Proportions of Obesity Status by Race and Income</h2>
