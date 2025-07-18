@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5 Checkup: Diabetes Prevalence by Race and Income</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js library for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Datalabels Plugin for displaying percentages on bars -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px; /* Fixed height for consistent comparison */
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Day 5 Checkup: Diabetes Prevalence by Race and Income</h1>
+        <p class="text-gray-600 mb-6">This page visualizes the percentage of diagnosed diabetes across different racial groups, stratified by income level, using a subset of the BRFSS 2023 data.</p>
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Percentage of Diagnosed Diabetes by Race Group (Lower Income)</h2>
+        <div class="chart-container">
+            <canvas id="lowerIncomeChart"></canvas>
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Percentage of Diagnosed Diabetes by Race Group (Higher Income)</h2>
+        <div class="chart-container">
+            <canvas id="higherIncomeChart"></canvas>
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Percentage of Diagnosed Diabetes by Race Group and Income (Combined View)</h2>
+        <div class="chart-container">
+            <canvas id="combinedChart"></canvas>
+        </div>
+
+        <div class="text-sm text-gray-500 mt-8">
+            <p><strong>Variable Definitions:</strong></p>
+            <ul class="list-disc list-inside ml-4">
+                <li><strong>DIABETE4:</strong> Diabetes Status (1: Yes, 2: Yes, but female told only during pregnancy, 3: No, 4: No, pre-diabetes or borderline diabetes, 7: Don’t know/Not Sure, 9: Refused)</li>
+                <li><strong>_RACE:</strong> Race/Ethnicity (1: White, 2: Black/African American, 3: American Indian/Alaska Native, 4: Asian, 5: Native Hawaiian/Other Pacific Islander, 6: Other Race, 7: Multiracial, 9: Don't know/Not sure/Refused)</li>
+                <li><strong>INCOME3:</strong> Income Level (1: Less than $10,000, ..., 8: $75,000 or more, 77/99: Refused/Don't know)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let brfssData = [];
+        let lowerIncomeChartInstance, higherIncomeChartInstance, combinedChartInstance;
+
+        // Register the datalabels plugin globally
+        Chart.register(ChartDatalabels);
+
+        // Define mappings for raw BRFSS variables to readable labels
+        const diabetesRawMap = {
+            1: 'Yes (Diagnosed)',
+            2: 'Yes (Pregnancy-related)',
+            3: 'No Diabetes',
+            4: 'Pre-diabetes/Borderline',
+            7: 'Don’t know/Not Sure',
+            9: 'Refused'
+        };
+
+        const raceRawMap = {
+            1: 'White',
+            2: 'Black/African American',
+            3: 'American Indian/Alaska Native',
+            4: 'Asian',
+            5: 'Native Hawaiian/Other Pacific Islander',
+            6: 'Other Race',
+            7: 'Multiracial',
+            9: 'Don’t know/Not Sure/Refused'
+        };
+
+        const incomeRawMap = {
+            1: 'Less than $10,000',
+            2: '$10,000 to $14,999',
+            3: '$15,000 to $19,999',
+            4: '$20,000 to $24,999',
+            5: '$25,000 to $34,999',
+            6: '$35,000 to $49,999',
+            7: '$50,000 to $74,999',
+            8: '$75,000 or more',
+            77: 'Don’t know/Not Sure',
+            99: 'Refused'
+        };
+
+        // Function to fetch data from the JSON file
+        async function fetchData() {
+            try {
+                const response = await fetch('brfss_2023_subset.json'); // Assumes JSON file is in the same directory
+                brfssData = await response.json();
+                processAndRenderCharts(); // Process and render charts once data is loaded
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.body.innerHTML = '<p class="text-red-500 text-center mt-10">Error loading data. Please ensure "brfss_2023_subset.json" is available.</p>';
+            }
+        }
+
+        // Function to process data and prepare for charting
+        function processAndRenderCharts() {
+            // Step 1: Create derived variables (similar to R's mutate and case_when)
+            const processedData = brfssData.map(d => {
+                const incomeCode = d.INCOME3;
+                let incomeGroup;
+                if ([1, 2, 3, 4, 5, 6].includes(incomeCode)) {
+                    incomeGroup = 'Lower Income (< $50,000)';
+                } else if ([7, 8].includes(incomeCode)) {
+                    incomeGroup = 'Higher Income (>= $50,000)';
+                } else {
+                    incomeGroup = null; // Treat as missing
+                }
+
+                const raceCode = d._RACE;
+                let raceGroup;
+                if (raceRawMap[raceCode]) {
+                    raceGroup = raceRawMap[raceCode];
+                } else {
+                    raceGroup = null; // Treat as missing
+                }
+
+                // Diabetes Status Group: Focus on 'Yes (Diagnosed)'
+                let diabetesStatusGroup;
+                if (d.DIABETE4 === 1) {
+                    diabetesStatusGroup = 'Yes (Diagnosed)';
+                } else if (d.DIABETE4 === 2) {
+                    diabetesStatusGroup = 'Yes (Pregnancy-related)';
+                } else if (d.DIABETE4 === 3) {
+                    diabetesStatusGroup = 'No Diabetes';
+                } else if (d.DIABETE4 === 4) {
+                    diabetesStatusGroup = 'Pre-diabetes/Borderline';
+                } else {
+                    diabetesStatusGroup = null; // Treat as missing
+                }
+
+                return {
+                    Income_Group: incomeGroup,
+                    Race_Group: raceGroup,
+                    Diabetes_Status_Group: diabetesStatusGroup
+                };
+            }).filter(d => d.Income_Group && d.Race_Group && d.Diabetes_Status_Group); // Filter out records with missing derived values
+
+            // Step 2: Calculate proportions (percentages)
+            const proportions = {};
+            // Get all unique race categories that are actually present in the filtered data
+            const raceCategories = Array.from(new Set(processedData.map(d => d.Race_Group))).sort();
+            const incomeCategories = ['Lower Income (< $50,000)', 'Higher Income (>= $50,000)'];
+
+            incomeCategories.forEach(incGroup => {
+                proportions[incGroup] = {};
+                raceCategories.forEach(rGroup => {
+                    proportions[incGroup][rGroup] = { total: 0, diagnosed: 0 };
+                });
+            });
+
+            processedData.forEach(d => {
+                const incGroup = d.Income_Group;
+                const rGroup = d.Race_Group;
+                if (proportions[incGroup] && proportions[incGroup][rGroup]) { // Ensure category exists
+                    proportions[incGroup][rGroup].total++;
+                    if (d.Diabetes_Status_Group === 'Yes (Diagnosed)') {
+                        proportions[incGroup][rGroup].diagnosed++;
+                    }
+                }
+            });
+
+            const chartData = [];
+            let maxPercentage = 0; // To find the max for fixed y-axis
+
+            incomeCategories.forEach(incGroup => {
+                raceCategories.forEach(rGroup => {
+                    const dataCounts = proportions[incGroup][rGroup];
+                    const percentage = dataCounts.total > 0 ? (dataCounts.diagnosed / dataCounts.total) * 100 : 0;
+                    chartData.push({
+                        Income_Group: incGroup,
+                        Race_Group: rGroup,
+                        percentage: parseFloat(percentage.toFixed(1))
+                    });
+                    if (percentage > maxPercentage) {
+                        maxPercentage = percentage;
+                    }
+                });
+            });
+
+            // Round up maxPercentage to a nice number for the Y-axis top
+            const maxYAxis = Math.ceil(maxPercentage / 5) * 5;
+            if (maxYAxis === 0) maxYAxis = 10; // Ensure at least a small range if all percentages are zero
+
+            renderCharts(chartData, raceCategories, maxYAxis);
+        }
+
+        // Function to render charts using Chart.js
+        function renderCharts(data, raceLabels, maxYAxis) {
+            // Destroy existing charts if they exist to prevent duplicates
+            if (lowerIncomeChartInstance) lowerIncomeChartInstance.destroy();
+            if (higherIncomeChartInstance) higherIncomeChartInstance.destroy();
+            if (combinedChartInstance) combinedChartInstance.destroy();
+
+            const lowerIncomeData = data.filter(d => d.Income_Group === 'Lower Income (< $50,000)');
+            const higherIncomeData = data.filter(d => d.Income_Group === 'Higher Income (>= $50,000)');
+
+            // Base Chart configuration options
+            const baseChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Race Group',
+                            font: { size: 14, weight: 'bold' },
+                            color: '#333'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            font: { size: 12 }
+                        },
+                        grid: {
+                            display: false // Hide vertical grid lines
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: maxYAxis, // Fixed Y-axis for consistent comparison
+                        title: {
+                            display: true,
+                            text: 'Percentage (%)',
+                            font: { size: 14, weight: 'bold' },
+                            color: '#333'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: { size: 12 }
+                        },
+                        grid: {
+                            color: '#e0e0e0' // Light gray horizontal grid lines
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hidden by default, enabled for combined chart
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        },
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 8
+                    },
+                    datalabels: { // Chart.js Datalabels plugin configuration
+                        display: true,
+                        align: 'end',
+                        anchor: 'end',
+                        color: '#444',
+                        font: {
+                            weight: 'bold',
+                            size: 10
+                        },
+                        formatter: function(value) {
+                            return value.toFixed(1) + '%';
+                        },
+                        offset: 4 // Offset labels slightly above bars
+                    },
+                    title: {
+                        display: true,
+                        font: { size: 16, weight: 'bold' },
+                        color: '#333',
+                        padding: { top: 10, bottom: 20 }
+                    }
+                }
+            };
+
+            // Chart 1: Lower Income Group
+            const lowerIncomeCtx = document.getElementById('lowerIncomeChart').getContext('2d');
+            lowerIncomeChartInstance = new Chart(lowerIncomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: lowerIncomeData.map(d => d.Race_Group),
+                    datasets: [{
+                        label: 'Percentage',
+                        data: lowerIncomeData.map(d => d.percentage),
+                        backgroundColor: 'rgba(70, 130, 180, 0.8)', // Steelblue with transparency
+                        borderColor: 'rgba(70, 130, 180, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...baseChartOptions,
+                    plugins: {
+                        ...baseChartOptions.plugins,
+                        title: {
+                            ...baseChartOptions.plugins.title,
+                            text: 'Percentage of Diagnosed Diabetes by Race Group (Lower Income)'
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Higher Income Group
+            const higherIncomeCtx = document.getElementById('higherIncomeChart').getContext('2d');
+            higherIncomeChartInstance = new Chart(higherIncomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: higherIncomeData.map(d => d.Race_Group),
+                    datasets: [{
+                        label: 'Percentage',
+                        data: higherIncomeData.map(d => d.percentage),
+                        backgroundColor: 'rgba(178, 34, 34, 0.8)', // Darkred with transparency
+                        borderColor: 'rgba(178, 34, 34, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...baseChartOptions,
+                    plugins: {
+                        ...baseChartOptions.plugins,
+                        title: {
+                            ...baseChartOptions.plugins.title,
+                            text: 'Percentage of Diagnosed Diabetes by Race Group (Higher Income)'
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Combined Faceted Chart
+            const combinedCtx = document.getElementById('combinedChart').getContext('2d');
+            combinedChartInstance = new Chart(combinedCtx, {
+                type: 'bar',
+                data: {
+                    labels: raceLabels, // All race labels for consistent X-axis
+                    datasets: [
+                        {
+                            label: 'Lower Income (< $50,000)',
+                            data: raceLabels.map(race => {
+                                const item = lowerIncomeData.find(d => d.Race_Group === race);
+                                return item ? item.percentage : 0;
+                            }),
+                            backgroundColor: 'rgba(70, 130, 180, 0.8)',
+                            borderColor: 'rgba(70, 130, 180, 1)',
+                            borderWidth: 1,
+                            barPercentage: 0.8, // Adjust bar width
+                            categoryPercentage: 0.8 // Adjust spacing between categories
+                        },
+                        {
+                            label: 'Higher Income (>= $50,000)',
+                            data: raceLabels.map(race => {
+                                const item = higherIncomeData.find(d => d.Race_Group === race);
+                                return item ? item.percentage : 0;
+                            }),
+                            backgroundColor: 'rgba(178, 34, 34, 0.8)',
+                            borderColor: 'rgba(178, 34, 34, 1)',
+                            borderWidth: 1,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.8
+                        }
+                    ]
+                },
+                options: {
+                    ...baseChartOptions,
+                    plugins: {
+                        ...baseChartOptions.plugins,
+                        legend: {
+                            display: true, // Show legend for combined chart
+                            position: 'top',
+                            labels: {
+                                font: { size: 12 }
+                            }
+                        },
+                        title: {
+                            ...baseChartOptions.plugins.title,
+                            text: 'Percentage of Diagnosed Diabetes by Race Group and Income (Combined View)'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ...baseChartOptions.scales.x,
+                            stacked: false // Ensures bars are side-by-side, not stacked
+                        },
+                        y: {
+                            ...baseChartOptions.scales.y,
+                            stacked: false // Ensures bars are side-by-side
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fetch data when the page loads
+        fetchData();
+    </script>
+</body>
+</html>
